@@ -1,4 +1,3 @@
-Aprire il gioco tramite il Launcher.bat, motivo? Perché la console standard di Windows non supporta UNICODE 16, il launcher invece ti rindirizza a Windows Terminal che invece supporta UNICODE 16.
+Open the game via Launcher.bat, why? Because the standard Windows console does not support UNICODE 16, the launcher instead redirects you to Windows Terminal which does support UNICODE 16.
 
-ATTENZIONE!
-Scaricare Windows Terminal da Microsoft store se non è già scaricato o altrimenti il launcher aprirà il gioco sulla console standard causando glitch grafici.
+WARNING! Download Windows Terminal from Microsoft store if it is not already downloaded or else the launcher will open the game on the standard console causing graphical glitches.
