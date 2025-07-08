@@ -258,6 +258,10 @@ void update_function(char key){
     bool run = true;
     bool render_map = true;
 
+    const int ammo_spawn_patterns[4][4] = {{0,1,2,3},{2,0,1,3},{2,3,0,1},{0,2,3,1}};
+    int current_ammo_spawn_pattern = rand() % 4;
+    int current_box_ammo = 0;
+
     const int max_ammo = 30;
 
     Player player;
@@ -274,7 +278,7 @@ void update_function(char key){
     vector<Bullet*>bullets;
     vector<Trigger*>triggers;
     vector<Door*>doors;
-    vector<Ammo*>ammos;
+    vector<Ammo*>boxes_ammo;
 
     const int ammo_timer = 300;
     int current_ammo_timer = ammo_timer;
@@ -283,7 +287,7 @@ void update_function(char key){
         for(int j=0;j<MAP_WIDTH;j++){
             Collider* collider;
             Trigger* trigger;
-            Ammo* ammo;
+            Ammo* box_ammo;
 
             if(map[i][j] == 3){
                 trigger = new Trigger(j,i,0);
@@ -291,8 +295,8 @@ void update_function(char key){
             }
             
             if(map[i][j] == 4){
-                ammo = new Ammo(j,i,5,true);
-                ammos.push_back(ammo);
+                box_ammo = new Ammo(j,i,5,true);
+                boxes_ammo.push_back(box_ammo);
             }
 
             if(map[i][j] == 1 || map[i][j] == 2){
@@ -335,9 +339,14 @@ void update_function(char key){
                 current_ammo_timer--;
             }
             else{
-                int random_index = rand() % ammos.size();
-                ammos[random_index]->set_Empty(false);
+                boxes_ammo[ammo_spawn_patterns[current_ammo_spawn_pattern][current_box_ammo]]->set_Empty(false);
+                current_box_ammo++;
                 current_ammo_timer = ammo_timer;
+            }
+
+            if(current_box_ammo > 3){
+                current_box_ammo = 0;
+                current_ammo_spawn_pattern = rand() % 4;
             }
 
             if(player.get_Move() && player.get_CurrentWalkingDelay() == player.get_WalkingDelay()){
@@ -430,10 +439,10 @@ void update_function(char key){
                 }
             }
 
-            for(Ammo* ammo : ammos){
-                if(player.get_X() == ammo->get_X() && player.get_Y() == ammo->get_Y() && !ammo->get_Empty() && player.get_Ammo() != max_ammo){
-                    ammo->set_Empty(true);
-                    player.change_Ammo(ammo->get_Ammo());
+            for(Ammo* box_ammo : boxes_ammo){
+                if(player.get_X() == box_ammo->get_X() && player.get_Y() == box_ammo->get_Y() && !box_ammo->get_Empty() && player.get_Ammo() != max_ammo){
+                    box_ammo->set_Empty(true);
+                    player.change_Ammo(box_ammo->get_Ammo());
                     if(player.get_Ammo() > max_ammo){
                         player.set_Ammo(max_ammo);
                     }
@@ -535,7 +544,7 @@ void update_function(char key){
                 render_map_function();
                 render_map = false;
             }
-            render_function(player,bullets,doors,ammos);
+            render_function(player,bullets,doors,boxes_ammo);
         }
 
         this_thread::sleep_for(chrono::milliseconds(20));
